@@ -20,9 +20,114 @@
       referrerpolicy="no-referrer"
     />
     <title>CRUD in HTML</title>
+    <style>
+      .modal-footer {
+        display: block;
+      }
+    </style>
   </head>
   <body>
-      
+    <!--? Modal -->
+    <div
+      class="modal fade"
+      id="add_desc_modal"
+      tabindex="-1"
+      aria-labelledby="add_desc_modal_label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="add_desc_modal_label">
+              Add Additional Description
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                id="add_desc_title"
+                name="add_desc_title"
+                placeholder="Title"
+              />
+            </div>
+            <div class="mb-3">
+              <input
+                type="number"
+                min="1"
+                class="form-control"
+                id="add_desc_priority"
+                name="add_desc_priority"
+                placeholder="Priority"
+              />
+            </div>
+            <div class="mb-3">
+              <textarea
+                name="add_desc_info"
+                id="add_desc_info"
+                rows="5"
+                class="form-control"
+                placeholder="Description Info"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer text-center">
+            <button class="btn btn-primary" type="button">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Additional Description</h1>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-primary">
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Priority</th>
+              <th scope="col">Information</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Lorem, ipsum.</td>
+              <td>1</td>
+              <td style="width: 60%">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque
+                laborum, repudiandae sapiente explicabo quasi est recusandae
+                mollitia eligendi minima quos!
+              </td>
+              <td>
+                <button class="btn btn-warning">
+                  <i class="far fa-edit"></i> Update
+                </button>
+                <button class="btn btn-danger">
+                  <i class="far fa-trash-alt"></i> Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#add_desc_modal"
+      >
+        Add New Description
+      </button>
+    </div>
+
     <!--? Jquery CDN -->
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
