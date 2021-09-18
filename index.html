@@ -19,6 +19,14 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <!-- ? Toastr CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+      integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <title>CRUD in HTML</title>
     <style>
       .modal-footer {
@@ -46,6 +54,7 @@
               class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
+              onclick="clearForm()"
             ></button>
           </div>
           <div class="modal-body">
@@ -79,7 +88,14 @@
             </div>
           </div>
           <div class="modal-footer text-center">
-            <button class="btn btn-primary" type="button">Save Changes</button>
+            <button
+              class="btn btn-primary"
+              type="button"
+              onclick="addOrUpdateAdditionalDesc()"
+              id="modal-button"
+            >
+              Add
+            </button>
           </div>
         </div>
       </div>
@@ -88,7 +104,7 @@
     <div class="container">
       <h1>Additional Description</h1>
       <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered" id="add_desc_table">
           <thead class="table-primary">
             <tr>
               <th scope="col">Title</th>
@@ -98,7 +114,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <!-- <tr>
               <td>Lorem, ipsum.</td>
               <td>1</td>
               <td style="width: 60%">
@@ -107,14 +123,19 @@
                 mollitia eligendi minima quos!
               </td>
               <td>
-                <button class="btn btn-warning">
-                  <i class="far fa-edit"></i> Update
+                <button
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#add_desc_modal"
+                  onclick="displayDesc(this)"
+                >
+                  <i class="far fa-edit"></i> Edit
                 </button>
-                <button class="btn btn-danger">
+                <button class="btn btn-danger" onclick="removeDesc()">
                   <i class="far fa-trash-alt"></i> Delete
                 </button>
               </td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>
@@ -140,5 +161,126 @@
       integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
       crossorigin="anonymous"
     ></script>
+    <!-- ? Toastr JS CDN -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <!-- ? Additional JS -->
+    <script>
+      // Current product being edited
+      var editRow = null;
+
+      // Display in modal
+      function displayDesc(ctl) {
+        editRow = $(ctl).parents("tr");
+        var cols = editRow.children("td");
+
+        $("#add_desc_title").val($(cols[0]).text());
+        $("#add_desc_priority").val($(cols[1]).text());
+        $("#add_desc_info").val($.trim($(cols[2]).text()));
+
+        $("#modal-button").text("Update");
+      }
+
+      // Function Call by Modal Button
+      function addOrUpdateAdditionalDesc() {
+        let noEmptyField = checkEmptyField();
+
+        if (noEmptyField) {
+          if ($("#modal-button").text() == "Update") {
+            descriptionUpdateInTable();
+          } else {
+            descriptionAddToTable();
+          }
+          clearForm();
+          closeModal();
+        } else {
+          toastr.error("Please do not leave field empty.");
+        }
+      }
+
+      function descriptionAddToTable() {
+        //   Add tbody tag in the table if there is not any
+        if ($("#add_desc_table tbody").length == 0) {
+          $("#add_desc_table").append("<tbody></tbody>");
+        }
+
+        // Append Description to table
+        $("#add_desc_table tbody").append(descriptionTableRow());
+
+        toastr.success("Description added to table");
+      }
+
+      function descriptionUpdateInTable() {
+        // Add changed product to table
+        $(editRow).after(descriptionTableRow());
+
+        // Remove original product
+        $(editRow).remove();
+
+        toastr.success("Description updated successfully");
+
+        $("#modal-button").text("Add");
+      }
+
+      //   Check empty field before adding data in table
+      function checkEmptyField() {
+        if (
+          $("#add_desc_title").val() !== null &&
+          $("#add_desc_title").val() !== "" &&
+          $("#add_desc_priority").val() !== null &&
+          $("#add_desc_priority").val() !== "" &&
+          $("#add_desc_info").val() !== null &&
+          $("#add_desc_info").val() !== ""
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      //   Creating element to add in the table with update and delete function
+      function descriptionTableRow() {
+        var newDescRow = `<tr><td>${$("#add_desc_title").val()}</td>
+              <td>${$("#add_desc_priority").val()}</td>
+              <td style="width: 60%">
+                ${$("#add_desc_info").val()}
+              </td>
+              <td>
+                <button class="btn btn-warning" data-bs-toggle="modal"
+        data-bs-target="#add_desc_modal" onClick="displayDesc(this)">
+                  <i class="far fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-danger" onClick="removeDesc(this)">
+                  <i class="far fa-trash-alt"></i> Delete
+                </button>
+              </td></tr>`;
+
+        return newDescRow;
+      }
+
+      // Delete product from <table>
+      function removeDesc(ctl) {
+        $(ctl).parents("tr").remove();
+        toastr.error("Description removed from table");
+      }
+
+      // Clear form fields
+      function clearForm() {
+        $("#add_desc_title").val("");
+        $("#add_desc_priority").val("");
+        $("#add_desc_info").val("");
+      }
+
+      //Close Modal
+      function closeModal() {
+        $("#add_desc_modal").modal("hide");
+        $("body").removeClass("modal-open");
+        $(".modal-backdrop").remove();
+      }
+    </script>
   </body>
 </html>
